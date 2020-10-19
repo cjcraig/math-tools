@@ -2,6 +2,7 @@
 This class will handle adding restrictions/requirements to random number generation.
 """
 import random
+from fractions import Fraction
 
 
 # Here we will have our rng options enumerated in an easier-to-read manner
@@ -25,6 +26,8 @@ def lsys_generator(choice, vals):
             vals[key] = random.choice(NUMBER_RANGE)
 
     if choice == RATIONALS:
-        print("Coming soon.")
+        for key in vals:
+            vals[key] = Fraction(random.choice(
+                NUMBER_RANGE), random.choice(NUMBER_RANGE))
 
     return vals

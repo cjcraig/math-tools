@@ -3,7 +3,10 @@ This is the starting/main location for starting the math generating methods.
 """
 
 import os
+from fractions import Fraction
+
 import rng_tools
+
 
 NEWLINE = os.linesep
 
@@ -56,7 +59,7 @@ def twovarsys():
         print("Set of solutions desired?" + NEWLINE +
               "1. Integer Solutions" + NEWLINE +
               "2. Rational Solutions" + NEWLINE +
-              "3. Real Solutions" + NEWLINE +
+              # "3. Real Solutions" + NEWLINE +
               "Enter anthing else to exit.")
         selection = input()
 
@@ -67,6 +70,7 @@ def twovarsys():
 
         # initialize loop control variable
         finished = False
+
         if int(selection) == 1:
 
             while not finished:
@@ -109,21 +113,21 @@ def twovarsys():
             twovarsys()
 
         # if user wants rational solutions
-        elif selection == 2:
+        elif int(selection) == 2:
             # commence loop until we get what we want
             while not finished:
                 # first, we generate random numbers for each of the coefficients/constants
-                coeffs = rng_tools.lsys_generator(rng_tools.INTEGERS, coeffs)
+                coeffs = rng_tools.lsys_generator(rng_tools.RATIONALS, coeffs)
 
                 # we'll use determinant a lot, might as well only compute it once
-                det = coeffs['a']*coeffs['d']-coeffs['b']*coeffs['c']
+                det = Fraction(
+                    Fraction(coeffs['a']*coeffs['d']) - Fraction(coeffs['b']*coeffs['c']))
 
                 # Next, we check for nonzero determinant of {{a,b},{c,d}}. If fails, regenerate.
                 if det == 0:
                     continue
 
                 # now check for divisibility, since we want rational solutions
-                # TODO mostly integers, occasionally an "over 2" or "over 4", not really rationals.
                 # only just copied it from the unfinished integer one,
                 # need to change these conditions here, maybe coeffs also?
                 if (
@@ -135,21 +139,21 @@ def twovarsys():
 
                 # if we made it here, it means we have integer solutions,
                 # so we can output the information:
-                solns[0] = (coeffs['d']*coeffs['e'] -
-                            coeffs['b']*coeffs['f']) / det
-                solns[1] = (coeffs['a']*coeffs['f'] -
-                            coeffs['c']*coeffs['e']) / det
+                solns[0] = Fraction((coeffs['d']*coeffs['e'] -
+                                     coeffs['b']*coeffs['f']) / det)
+                solns[1] = Fraction((coeffs['a']*coeffs['f'] -
+                                     coeffs['c']*coeffs['e']) / det)
                 finished = True
 
-            print("System is: " + str(coeffs['a']) + "x + " + str(coeffs['b']) + "y = "
+            print("System is: " + str((coeffs['a'])) + "x + " + str(coeffs['b']) + "y = "
                   + str(coeffs['e'])
                   + NEWLINE + str(coeffs['c']) + "x + " +
                   str(coeffs['d']) + "y = "
                   + str(coeffs['f']))
             print("Solution is:" + NEWLINE + "x = " +
-                  str(solns[0]) + NEWLINE + "y = " + str(solns[1]))
-            return 0
-        elif selection == 3:
+                  str((solns[0])) + NEWLINE + "y = " + str((solns[1])))
+
+        elif int(selection) == 3:
             return 0
         else:
             selection = -1
