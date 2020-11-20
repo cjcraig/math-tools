@@ -41,7 +41,7 @@ def twovarsys():
         selection = input()
 
         # if we don't get an integer input, don't try everything else
-        if (not selection.isnumeric()) or (int(selection) > 3):
+        if (not selection.isnumeric()) or (int(selection) > 2):
             selection = -1
             continue
 
