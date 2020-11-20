@@ -11,8 +11,9 @@ def start_menu():
     Displays all currently available options from the start of main menu
     """
     print(
-        '1. Create two-variable system\n' +
-        '2. More to be added...'
+        '1. Create two-variable system' + generation.NEWLINE +
+        '2. Create quadratic polynomial...' + generation.NEWLINE +
+        '3+. Not yet implemented.'
     )
 
 
@@ -23,8 +24,12 @@ def switcher(inbound):
     """
     #print("inbound is: "+inbound)
     if int(inbound) == 1:
-        print("Selected two-variable system...")
+        print("Selected two-variable system..." + generation.NEWLINE)
         generation.twovarsys()
+
+    elif int(inbound) == 2:
+        print("Selected quadratic..." + generation.NEWLINE)
+        generation.quadratics()
 
 
 print('Welcome! Please select an option below...')

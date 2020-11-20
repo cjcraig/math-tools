@@ -153,23 +153,60 @@ def quadratics():
     roots = []
     selection = 1
 
-    while selection > 0:
+    while int(selection) > 0:
         # prompt the user for what types of solutions are desired
         print("Please select first option (integer inputs only, please):")
         print("Set of solutions desired?" + NEWLINE +
-              "1. Integer Coefficients and Solutions" + NEWLINE +
-              "2. Rational Coefficients and Solutions" + NEWLINE +
-              "3. Real Coefficients and Solutions"
+              "1. Integer Coefficients and Rational Solutions" + NEWLINE +
+              "2. Rational Coefficients and Real Solutions" + NEWLINE +
               # TODO allow for mismatch of solution type and coefficient type
               # TODO allow decisions between displaying roots as decimals and radicals
-              "Enter anthing else to exit.")
+              "Enter larger number to exit.")
         selection = input()
+
+        if int(selection) < 1:
+            selection = -1
+            break
+        if int(selection) > 2:
+            selection = -1
+            break
+
         print(
-            "Number of roots desired? (0, 1, or 2, note that 0 will result in complex solutions)")
+            "Number of real roots desired?" +
+            "(0, 1, or 2, note that 0 will result in complex solutions)")
         rootnum = input()
 
         if int(selection) == 1:
-            coeffs = rng_tools.quadrat_generator(rng_tools.INTEGERS, coeffs)
 
-            # calculate discriminant: b^2 - 4ac
-            disc = (coeffs['b']*coeffs['b']) - (4 * coeffs['a'] * coeffs['c'])
+            finished = False
+
+            while not finished:
+                # first we generate random integer coefficients
+                coeffs = rng_tools.quadrat_generator(
+                    rng_tools.INTEGERS, coeffs)
+
+                # calculate discriminant: b^2 - 4ac
+                disc = (coeffs['b']*coeffs['b']) - \
+                    (4 * coeffs['a'] * coeffs['c'])
+
+                if int(rootnum) == 0:
+                    # if we want no real roots
+                    finished = (disc < 0)
+                elif int(rootnum) == 1:
+                    # one real root means discriminant is zero
+                    finished = (disc == 0)
+                else:
+                    # two real roots means positive discriminant
+                    finished = True
+
+        # TODO write rational mode
+        elif int(selection) == 2:
+            print("Not yet implemented")
+
+        roots.append(((-1)*coeffs['b'] + disc**(0.5))/(2*coeffs['a']))
+        roots.append(((-1)*coeffs['b'] + disc**(0.5))/(2*coeffs['a']))
+
+        print("Polynomial is: " + str(coeffs['a']) + "x^2 + " +
+              str(coeffs['b']) + "x + " + str(coeffs['c']))
+
+    print("Ending program...")
