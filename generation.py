@@ -154,7 +154,6 @@ def quadratics():
 
     while int(selection) > 0:
         # prompt the user for what types of solutions are desired
-        print("Please select first option (integer inputs only, please):")
         print("Set of solutions desired?" + NEWLINE +
               "1. Integer Coefficients and Rational Solutions" + NEWLINE +
               "2. Rational Coefficients and Real Solutions" + NEWLINE +
@@ -175,51 +174,32 @@ def quadratics():
             "(0, 1, or 2, note that 0 will result in complex solutions)")
         rootnum = input()
 
-        if int(selection) == 1:
+        finished = False
 
-            finished = False
-
-            while not finished:
-                # first we generate random integer coefficients
+        while not finished:
+            # first we generate random coefficients
+            if int(selection) == 1:
                 coeffs = rng_tools.quadrat_generator(
                     rng_tools.INTEGERS, coeffs)
 
-                # calculate discriminant: b^2 - 4ac
-                disc = (coeffs['b']*coeffs['b']) - \
-                    (4 * coeffs['a'] * coeffs['c'])
-
-                if int(rootnum) == 0:
-                    # if we want no real roots
-                    finished = (disc < 0)
-                elif int(rootnum) == 1:
-                    # one real root means discriminant is zero
-                    finished = (disc == 0)
-                else:
-                    # two real roots means positive discriminant
-                    finished = True
-
-        elif int(selection) == 2:
-
-            finished = False
-
-            while not finished:
+            elif int(selection) == 2:
                 # first we generate random rational coefficients
                 coeffs = rng_tools.quadrat_generator(
                     rng_tools.RATIONALS, coeffs)
 
-                # calculate discriminant: b^2 - 4ac
-                disc = (coeffs['b']*coeffs['b']) - \
-                    (4 * coeffs['a'] * coeffs['c'])
+            # calculate discriminant: b^2 - 4ac
+            disc = (coeffs['b']*coeffs['b']) - \
+                (4 * coeffs['a'] * coeffs['c'])
 
-                if int(rootnum) == 0:
-                    # if we want no real roots
-                    finished = (disc < 0)
-                elif int(rootnum) == 1:
-                    # one real root means discriminant is zero
-                    finished = (disc == 0)
-                else:
-                    # two real roots means positive discriminant
-                    finished = (disc > 0)
+            if int(rootnum) == 0:
+                # if we want no real roots
+                finished = (disc < 0)
+            elif int(rootnum) == 1:
+                # one real root means discriminant is zero
+                finished = (disc == 0)
+            else:
+                # two real roots means positive discriminant
+                finished = (disc > 0)
 
         # TODO force rational output?
         roots.append(((-1)*coeffs['b'] + disc**(0.5))/(2*coeffs['a']))
@@ -231,5 +211,6 @@ def quadratics():
         # TODO turn -- into +
         print("Factored form: " + str(coeffs['a']) +
               "(x-"+str(roots[0]) + ")(x-"+str(roots[1])+")")
+        print(NEWLINE)
 
     print("Ending program...")
