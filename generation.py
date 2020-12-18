@@ -219,12 +219,17 @@ def quadratics():
                     finished = (disc == 0)
                 else:
                     # two real roots means positive discriminant
-                    finished = True
+                    finished = (disc > 0)
 
+        # TODO force rational output?
         roots.append(((-1)*coeffs['b'] + disc**(0.5))/(2*coeffs['a']))
-        roots.append(((-1)*coeffs['b'] + disc**(0.5))/(2*coeffs['a']))
+        roots.append(((-1)*coeffs['b'] - disc**(0.5))/(2*coeffs['a']))
 
         print("Polynomial is: " + str(coeffs['a']) + "x^2 + " +
               str(coeffs['b']) + "x + " + str(coeffs['c']))
+
+        # TODO turn -- into +
+        print("Factored form: " + str(coeffs['a']) +
+              "(x-"+str(roots[0]) + ")(x-"+str(roots[1])+")")
 
     print("Ending program...")
