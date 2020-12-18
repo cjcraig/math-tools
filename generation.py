@@ -138,7 +138,6 @@ def twovarsys():
     return 0
 
 
-# TODO Not finished, do not run this one yet.
 def quadratics():
     """
     This method will create problems that involve second degree polynomials
@@ -199,9 +198,28 @@ def quadratics():
                     # two real roots means positive discriminant
                     finished = True
 
-        # TODO write rational mode
         elif int(selection) == 2:
-            print("Not yet implemented")
+
+            finished = False
+
+            while not finished:
+                # first we generate random rational coefficients
+                coeffs = rng_tools.quadrat_generator(
+                    rng_tools.RATIONALS, coeffs)
+
+                # calculate discriminant: b^2 - 4ac
+                disc = (coeffs['b']*coeffs['b']) - \
+                    (4 * coeffs['a'] * coeffs['c'])
+
+                if int(rootnum) == 0:
+                    # if we want no real roots
+                    finished = (disc < 0)
+                elif int(rootnum) == 1:
+                    # one real root means discriminant is zero
+                    finished = (disc == 0)
+                else:
+                    # two real roots means positive discriminant
+                    finished = True
 
         roots.append(((-1)*coeffs['b'] + disc**(0.5))/(2*coeffs['a']))
         roots.append(((-1)*coeffs['b'] + disc**(0.5))/(2*coeffs['a']))
