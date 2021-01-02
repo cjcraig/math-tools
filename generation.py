@@ -149,10 +149,12 @@ def quadratics():
         'c': 0
     }
 
-    roots = []
     selection = 1
 
     while int(selection) > 0:
+
+        roots = []
+
         # prompt the user for what types of solutions are desired
         print("Set of solutions desired?" + NEWLINE +
               "1. Integer Coefficients and Rational Solutions" + NEWLINE +
@@ -210,7 +212,19 @@ def quadratics():
 
         # TODO turn -- into +
         print("Factored form: " + str(coeffs['a']) +
-              "(x-"+str(roots[0]) + ")(x-"+str(roots[1])+")")
+              "(x" + str_rt_sub(str(roots[0])) + ")(x"+str_rt_sub(str(roots[1]))+")")
         print(NEWLINE)
 
     print("Ending program...")
+
+
+def str_rt_sub(inbound_num):
+    """
+    Method to format subtracting roots. If the incoming number is already negative,
+    we should add the positive of the root. Otherwise, we want to subtract.
+    """
+
+    if inbound_num[0] == '-':
+        return inbound_num.replace('-', '+')
+
+    return '-'+inbound_num
