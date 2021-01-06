@@ -4,6 +4,7 @@ For example, a number in simple-radical form should have ways to display
 """
 
 from math import ceil
+from math import floor
 from fractions import Fraction
 
 
@@ -18,7 +19,7 @@ class RadicalNum:
             raise TypeError(
                 "Simple radical form only makes sense applied to rationals!")
 
-        self.ratpart = Fraction(input_number)
+        self.number = Fraction(input_number)
 
         self.radpart = 1
 
@@ -31,11 +32,13 @@ class RadicalNum:
 
         # Output format: [integer,radical]
         outpair = [1, 1]
-        root = self.number**0.5
+        toproot = self.number.numerator**0.5
+        botroot = self.number.denominator**0.5
 
-        # If we have a perfect square, might as well just return the root
-        if root*root == self.number:
-            outpair[0] = root
+        # If both numerator and denominator are perfect squares, we have a perfect square.
+        # TODO floor or ceil? Need to test the logic
+        if Fraction(floor(toproot**2), floor(botroot**2)) == self.number:
+            outpair[0] = Fraction(toproot**2, botroot**2)
             return outpair
 
         # First, we need to extract any perfect square factor
