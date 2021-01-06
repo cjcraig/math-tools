@@ -2,7 +2,8 @@
 This module will contain classes for mathematical objects that need their own methods and displays.
 For example, a number in simple-radical form should have ways to display
 """
-from math import floor
+
+from math import ceil
 from fractions import Fraction
 
 
@@ -13,11 +14,13 @@ class RadicalNum:
 
     def __init__(self, input_number):
         # We should make sure we are starting with a rational number
-        if isinstance(input_number, int) or isinstance(input_number, Fraction):
-            self.number = input_number
-        else:
+        if not isinstance(input_number, (Fraction, int)):
             raise TypeError(
                 "Simple radical form only makes sense applied to rationals!")
+
+        self.ratpart = Fraction(input_number)
+
+        self.radpart = 1
 
     # TODO finish this method
 
@@ -38,12 +41,13 @@ class RadicalNum:
         # First, we need to extract any perfect square factor
         square_factors = []
 
-        for i in range(4, floor(self.number/2), 1):
-            if self.number % i == 0 and i*i == i**0.5:
-                square_factors.append(i)
+        # Here we will run through the factors of numerator and denominator,
+        # reducing by repeated factors
+
+        return outpair
 
 
-def get_factors(number):
+def get_prime_factors(number):
     """
     Method to get a list of factors, repeated values allowed.
     """
@@ -52,7 +56,7 @@ def get_factors(number):
         factor_list.append(2)
         number = number/2
 
-    for factor in range(3, number/2, 2):
+    for factor in range(3, ceil(number/2), 2):
         while number % factor == 0:
             factor_list.append(factor)
             number = number/factor
