@@ -6,24 +6,28 @@ from math import floor
 
 
 class RadicalNum:
-
+    """
+    Class to handle numbers in simple radical form.
+    """
     # TODO unfinished method
-    def radform(input_number):
-    """
-    This function takes in a number, and returns it in simple radical form.
-    """
-    # Output format: [integer,radical]
-    outpair = [1, 1]
-    root = input_number**0.5
 
-    # If we have a perfect square, might as well just return the root
-    if root*root == input_number:
-        outpair[0] = root
-        return outpair
+    def radform(self, input_number):
+        """
+        This function takes in a number, and returns it in simple radical form.
+        """
 
-    # First, we need to extract any perfect square factor
-    square_factors = []
+        # Output format: [integer,radical]
+        outpair = [1, 1]
+        root = input_number**0.5
 
-    for i in range(4, floor(input_number/2), 1):
-        if input_number % i == 0 and i*i == i**0.5:
-            square_factors.append(i)
+        # If we have a perfect square, might as well just return the root
+        if root*root == input_number:
+                outpair[0] = root
+                return outpair
+
+            # First, we need to extract any perfect square factor
+            square_factors = []
+
+            for i in range(4, floor(input_number/2), 1):
+                if input_number % i == 0 and i*i == i**0.5:
+                    square_factors.append(i)
