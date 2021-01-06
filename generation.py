@@ -207,10 +207,10 @@ def quadratics():
         roots.append(((-1)*coeffs['b'] + disc**(0.5))/(2*coeffs['a']))
         roots.append(((-1)*coeffs['b'] - disc**(0.5))/(2*coeffs['a']))
 
+        # TODO properly sign b and c
         print("Polynomial is: " + str(coeffs['a']) + "x^2 + " +
               str(coeffs['b']) + "x + " + str(coeffs['c']))
 
-        # TODO turn -- into +
         print("Factored form: " + str(coeffs['a']) +
               "(x" + str_rt_sub(str(roots[0])) + ")(x"+str_rt_sub(str(roots[1]))+")")
         print(NEWLINE)
@@ -228,3 +228,14 @@ def str_rt_sub(inbound_num):
         return inbound_num.replace('-', '+')
 
     return '-'+inbound_num
+
+
+def radform(input_number):
+    """
+    This function takes in a number, and returns it in simple radical form.
+    """
+
+    root = input_number**0.5
+
+    if root*root == input_number:
+        return root
