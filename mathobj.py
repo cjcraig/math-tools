@@ -36,9 +36,9 @@ class RadicalNum:
         botroot = self.number.denominator**0.5
 
         # If both numerator and denominator are perfect squares, we have a perfect square.
-        # TODO floor or ceil? Need to test the logic
-        if Fraction(floor(toproot**2), floor(botroot**2)) == self.number:
-            outpair[0] = Fraction(toproot**2, botroot**2)
+        # We can take 'perfect square' to mean integer root.
+        if toproot == floor(toproot) and botroot == floor(botroot):
+            outpair[0] = Fraction(floor(toproot), floor(botroot))
             return outpair
 
         # First, we need to extract any perfect square factor
