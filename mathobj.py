@@ -10,7 +10,8 @@ from fractions import Fraction
 
 class RadicalNum:
     """
-    Class to handle numbers in simple radical form.
+    Class to handle numbers in simple radical form. Numbers are stored as a pair of values rat_part and rad_part,
+    where rat_part is the Fraction value outside of the square root, and rad_part is the integer within the square root.
     """
 
     def __init__(self, input_number):
@@ -19,40 +20,90 @@ class RadicalNum:
             raise TypeError(
                 "Simple radical form only makes sense applied to rationals!")
 
-        self.number = Fraction(input_number)
+        # To start, we assume the entire given number is inside the square root. Other methods will fix this.
+        self.rat_part = 1
+        self.rad_part = Fraction(input_number)
+        self.simplify()
 
-        self.radpart = 1
+    def __str__(self):
+        rootstring = ''
+        if self.rad_part != 1:
+            rootstring = '*sqrt('+str(self.rad_part)+')'
 
-    # TODO finish this method
+        return rational_string(self.rat_part) + rootstring
 
-    def radform(self):
+    def simplify(self):
         """
         This function takes in a number, and returns it in simple radical form.
+        The radical part will represent the square root of an integer, and the radical part will have no square factors.
         """
-
-        # Output format: [integer,radical]
+        # Outpair format: [rational part,radical part]
         outpair = [1, 1]
-        toproot = self.number.numerator**0.5
-        botroot = self.number.denominator**0.5
 
-        # If both numerator and denominator are perfect squares, we have a perfect square.
-        # We can take 'perfect square' to mean integer root.
-        if toproot == floor(toproot) and botroot == floor(botroot):
-            outpair[0] = Fraction(floor(toproot), floor(botroot))
-            return outpair
+        # We will handle the top and bottom factors separately, since denominator radicals need to be moved.
+        # Note each of these is a pair of the form [integer part, radical part]
+        top_vals = integer_root(self.rad_part.numerator)
+        bot_vals = integer_root(self.rad_part.denominator)
 
-        # First, we need to extract any perfect square factor
-        square_factors = []
+        # For simple radical form, we will remove square roots from the denominator by multiplying...
 
-        # Here we will run through the factors of numerator and denominator,
-        # reducing by repeated factors
+        # Multiply the radical from bottom into top
+        top_vals[1] *= bot_vals[1]
+        # Multiply radical from bottom into bottom (squaring the radical making it integer, and removing the radical)
+        bot_vals[0] *= bot_vals[1]
+        bot_vals[1] = 1
 
+        # Now bring it all together:
+        self.rat_part = Fraction(top_vals[0], bot_vals[0])
+        self.rad_part = top_vals[1]
         return outpair
+
+
+def integer_root(in_root):
+    """
+    Takes in an integer and returns it's square root in simple radical form.
+    Example: sqrt[540] = sqrt[2*2*3*3*3*5] = 2*3*sqrt[(2*2*2*3*3*3*5) / (2^2 * 3^2)] = 6*sqrt[15]
+    """
+    # First, get our list of factors
+    factors = get_prime_factors(in_root)
+
+    # This will store
+    out_root = 1
+
+    i = 0
+    while i < len(factors)-1:
+        # Check if there is a repeated factor; if so, we can take the square root of that pair
+        if factors[i] == factors[i+1]:
+            out_root *= factors[i]
+            del factors[i+1]
+            del factors[i]
+            continue
+        i += 1
+
+    # At this point, repeated roots will have been reduced and multiplied to the 'front' of the radical.
+    # However, we have not reduced the inside of the radical! We need to do that now.
+    # Since a factor outside of the radical was 'rooted', we need to re-square when reducing the interior.
+    # We could have reduced the interior as we removed factors, but this way we only need to do one division and one squaring instead of many.
+    in_root = int(in_root / (out_root**2))
+
+    return [out_root, in_root]
+
+
+def rational_string(number):
+    """
+    Turns numbers into strings, and converts fractions with denominator 1 into an integer.
+    """
+    output = str(number)
+    if isinstance(number, Fraction):
+        if number.denominator == 1:
+            output = str(number.numerator)
+
+    return output
 
 
 def get_prime_factors(number):
     """
-    Method to get a list of factors, repeated values allowed.
+    Method to get a list of factors given an integer, repeated values allowed.
     """
     factor_list = []
     while number % 2 == 0:
