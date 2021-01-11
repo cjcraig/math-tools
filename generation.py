@@ -52,7 +52,7 @@ def twovarsys():
 
             while not finished:
                 # first, we generate random numbers for each of the coefficients/constants
-                coeffs = rng_tools.lsys_generator(rng_tools.INTEGERS, coeffs)
+                coeffs = rng_tools.spec_generator(rng_tools.INTEGERS, coeffs)
 
                 # we'll use determinant a lot, might as well only compute it once
                 det = coeffs['a']*coeffs['d']-coeffs['b']*coeffs['c']
@@ -94,7 +94,7 @@ def twovarsys():
             # commence loop until we get what we want
             while not finished:
                 # first, we generate random numbers for each of the coefficients/constants
-                coeffs = rng_tools.lsys_generator(rng_tools.RATIONALS, coeffs)
+                coeffs = rng_tools.spec_generator(rng_tools.RATIONALS, coeffs)
 
                 # we'll use determinant a lot, might as well only compute it once
                 det = Fraction(
@@ -181,12 +181,12 @@ def quadratics():
         while not finished:
             # first we generate random coefficients
             if int(selection) == 1:
-                coeffs = rng_tools.quadrat_generator(
+                coeffs = rng_tools.spec_generator(
                     rng_tools.INTEGERS, coeffs)
 
             elif int(selection) == 2:
                 # first we generate random rational coefficients
-                coeffs = rng_tools.quadrat_generator(
+                coeffs = rng_tools.spec_generator(
                     rng_tools.RATIONALS, coeffs)
 
             # calculate discriminant: b^2 - 4ac

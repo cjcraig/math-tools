@@ -14,30 +14,12 @@ REALS = 3
 NUMBER_RANGE = [*range(1, 10)] + [*range(-10, 0)]
 
 
-def lsys_generator(choice, vals):
+def spec_generator(choice, vals):
     """
-    This will generate random numbers to fill in the coefficients and constants for a solvable
-    linear system, according to the specified constraints
+    This will generate random numbers to fill in the coefficients and constants for math problems, 
+    according to the specified constraints.
     """
 
-    if choice == INTEGERS:
-        # first, we generate random numbers for each of the coefficients/constants
-        for key in vals:
-            vals[key] = random.choice(NUMBER_RANGE)
-
-    if choice == RATIONALS:
-        for key in vals:
-            vals[key] = Fraction(random.choice(
-                NUMBER_RANGE), random.choice(NUMBER_RANGE))
-
-    return vals
-
-
-def quadrat_generator(choice, vals):
-    """
-    This will generate random numbers to fill in the coefficients and
-    constant for a second-degree polynomial
-    """
     if choice == INTEGERS:
         for key in vals:
             vals[key] = random.choice(NUMBER_RANGE)
