@@ -4,14 +4,15 @@ For example, a number in simple-radical form should have ways to display
 """
 
 from math import ceil
-from math import floor
 from fractions import Fraction
 
 
 class RadicalNum:
     """
-    Class to handle numbers in simple radical form. Numbers are stored as a pair of values rat_part and rad_part,
-    where rat_part is the Fraction value outside of the square root, and rad_part is the integer within the square root.
+    Class to handle numbers in simple radical form.
+    Numbers are stored as a pair of values rat_part and rad_part,
+    where rat_part is the Fraction value outside of the square root,
+    and rad_part is the integer within the square root.
     """
 
     def __init__(self, input_number):
@@ -20,7 +21,8 @@ class RadicalNum:
             raise TypeError(
                 "Simple radical form only makes sense applied to rationals!")
 
-        # To start, we assume the entire given number is inside the square root. Other methods will fix this.
+        # To start, we assume the entire given number is inside the square root.
+        # Other functions will fix this.
         self.rat_part = 1
         self.rad_part = Fraction(input_number)
         self.simplify()
@@ -35,21 +37,25 @@ class RadicalNum:
     def simplify(self):
         """
         This function takes in a number, and returns it in simple radical form.
-        The radical part will represent the square root of an integer, and the radical part will have no square factors.
+        The radical part will represent the square root of an integer,
+        and the radical part will have no square factors.
         """
         # Outpair format: [rational part,radical part]
         outpair = [1, 1]
 
-        # We will handle the top and bottom factors separately, since denominator radicals need to be moved.
+        # We will handle the top and bottom factors separately,
+        # since denominator radicals need to be moved.
         # Note each of these is a pair of the form [integer part, radical part]
         top_vals = integer_root(self.rad_part.numerator)
         bot_vals = integer_root(self.rad_part.denominator)
 
-        # For simple radical form, we will remove square roots from the denominator by multiplying...
+        # For simple radical form, we will
+        # remove square roots from the denominator by multiplying...
 
         # Multiply the radical from bottom into top
         top_vals[1] *= bot_vals[1]
-        # Multiply radical from bottom into bottom (squaring the radical making it integer, and removing the radical)
+        # Multiply radical from bottom into bottom
+        # (squaring the radical making it integer, and removing the radical)
         bot_vals[0] *= bot_vals[1]
         bot_vals[1] = 1
 
@@ -80,10 +86,13 @@ def integer_root(in_root):
             continue
         i += 1
 
-    # At this point, repeated roots will have been reduced and multiplied to the 'front' of the radical.
+    # At this point, repeated roots will have been reduced
+    # and multiplied to the 'front' of the radical.
     # However, we have not reduced the inside of the radical! We need to do that now.
-    # Since a factor outside of the radical was 'rooted', we need to re-square when reducing the interior.
-    # We could have reduced the interior as we removed factors, but this way we only need to do one division and one squaring instead of many.
+    # Since a factor outside of the radical was 'rooted',
+    # we need to re-square when reducing the interior.
+    # We could have reduced the interior as we removed factors,
+    # but this way we only need to do one division and one squaring instead of many.
     in_root = int(in_root / (out_root**2))
 
     return [out_root, in_root]
