@@ -34,6 +34,24 @@ class RadicalNum:
 
         return rational_string(self.rat_part) + rootstring
 
+    def __mul__(self, other):
+        """
+        Multiplies together according to the process in radical_multiplication,
+        overloading the * operator
+        """
+        # need to handle a few cases:
+
+        # rational * rational
+        if(isinstance(other, RadicalNum)):
+            return self.radical_multiplication(self, other)
+        # rational * fraction or rational * integer
+        if(isinstance(other, Fraction) or isinstance(other, int)):
+            # in this case need to convert to a radical number before multiplying
+            return self.radical_multiplication(self, RadicalNum(other*other))
+
+    def __rmul__(self, other):
+        return self.__mul__(other)
+
     def simplify(self):
         """
         This function takes in a number, and returns it in simple radical form.
@@ -63,6 +81,25 @@ class RadicalNum:
         self.rat_part = Fraction(top_vals[0], bot_vals[0])
         self.rad_part = top_vals[1]
         return outpair
+
+    @staticmethod
+    def radical_multiplication(num1, num2):
+        """
+        Multiplies two radical numbers of the type RadicalNum.
+        Static here so it can be used without * needed (for whatever reason)
+        """
+        if not isinstance(num1, RadicalNum) or not isinstance(num2, RadicalNum):
+            raise TypeError(
+                "radical_multiplication is only for two objects of type RadicalNum")
+
+        # First we find the product of the non-rooted parts
+        prod = num1.rat_part * num2.rat_part
+        # now we square it to put it 'back' into a square root
+        prod = prod * prod
+        # now multiply the radical we just made with the radicals from each number
+        prod = prod * num1.rad_part * num2.rad_part
+
+        return RadicalNum(prod)
 
 
 def integer_root(in_root):
