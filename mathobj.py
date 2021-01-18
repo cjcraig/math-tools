@@ -42,12 +42,14 @@ class RadicalNum:
         # need to handle a few cases:
 
         # rational * rational
-        if(isinstance(other, RadicalNum)):
+        if isinstance(other, RadicalNum):
             return self.radical_multiplication(self, other)
         # rational * fraction or rational * integer
-        if(isinstance(other, Fraction) or isinstance(other, int)):
+        if isinstance(other, (Fraction, int)):
             # in this case need to convert to a radical number before multiplying
             return self.radical_multiplication(self, RadicalNum(other*other))
+        raise TypeError(
+            "RadicalNum only supports mult with same type, Fraction, or int")
 
     def __rmul__(self, other):
         return self.__mul__(other)
