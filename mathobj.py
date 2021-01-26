@@ -34,6 +34,26 @@ class RadicalNum:
 
         return rational_string(self.rat_part) + rootstring
 
+    def __add__(self, other):
+        if isinstance(other, RadicalNum):
+            # we can only combine two radical numbers if the simplified radical part matches
+            if self.rad_part == other.rad_part:
+                # add together the not-radical parts
+                temp = self.rat_part + other.rat_part
+                # 'square' the rational part to represent it as a radical, multiply it in, and make new radical number
+                return RadicalNum(temp * temp * self.rad_part)
+
+        # if our radical number is actually rational, we can add with those types
+        if isinstance(other, (Fraction, int)):
+            if self.rad_part == 1:
+                return self.rat_part + other
+
+        raise TypeError(
+            "Can only add two RadicalNums of matching radical part")
+
+    def __radd__(self, other):
+        return self.add(other)
+
     def __mul__(self, other):
         """
         Multiplies together according to the process in radical_multiplication,
@@ -66,8 +86,8 @@ class RadicalNum:
         # We will handle the top and bottom factors separately,
         # since denominator radicals need to be moved.
         # Note each of these is a pair of the form [integer part, radical part]
-        top_vals = integer_root(self.rad_part.numerator)
-        bot_vals = integer_root(self.rad_part.denominator)
+        top_vals = int_root(self.rad_part.numerator)
+        bot_vals = int_root(self.rad_part.denominator)
 
         # For simple radical form, we will
         # remove square roots from the denominator by multiplying...
@@ -104,7 +124,7 @@ class RadicalNum:
         return RadicalNum(prod)
 
 
-def integer_root(in_root):
+def int_root(in_root):
     """
     Takes in an integer and returns it's square root in simple radical form.
     Example: sqrt[540] = sqrt[2*2*3*3*3*5] = 2*3*sqrt[(2*2*2*3*3*3*5) / (2^2 * 3^2)] = 6*sqrt[15]
