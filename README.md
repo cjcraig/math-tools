@@ -1,4 +1,2 @@
 # math-tools
-For mathy tools
-
-This is a place for me to put some tools I'm writing to help me learn python and to generate math problems.
+A collection of functions and classes in Python to provide representation of mathematical objects such as radical numbers, and to provide methods for generating random problems of certain categories complete with solutions and alternate formats.
