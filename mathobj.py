@@ -7,7 +7,7 @@ from math import ceil
 from fractions import Fraction
 
 
-class RadicalNum:
+class Radical:
     """
     Class to handle numbers in simple radical form.
     Numbers are stored as a pair of values rat_part and rad_part,
@@ -35,13 +35,13 @@ class RadicalNum:
         return rational_string(self.rat_part) + rootstring
 
     def __add__(self, other):
-        if isinstance(other, RadicalNum):
+        if isinstance(other, Radical):
             # we can only combine two radical numbers if the simplified radical part matches
             if self.rad_part == other.rad_part:
                 # add together the not-radical parts
                 temp = self.rat_part + other.rat_part
                 # 'square' the rational part to represent it as a radical, multiply it in, and make new radical number
-                return RadicalNum(temp * temp * self.rad_part)
+                return Radical(temp * temp * self.rad_part)
 
         # if our radical number is actually rational, we can add with those types
         if isinstance(other, (Fraction, int)):
@@ -62,12 +62,12 @@ class RadicalNum:
         # need to handle a few cases:
 
         # rational * rational
-        if isinstance(other, RadicalNum):
+        if isinstance(other, Radical):
             return self.radical_multiplication(self, other)
         # rational * fraction or rational * integer
         if isinstance(other, (Fraction, int)):
             # in this case need to convert to a radical number before multiplying
-            return self.radical_multiplication(self, RadicalNum(other*other))
+            return self.radical_multiplication(self, Radical(other*other))
         raise TypeError(
             "RadicalNum only supports mult with same type, Fraction, or int")
 
@@ -110,7 +110,7 @@ class RadicalNum:
         Multiplies two radical numbers of the type RadicalNum.
         Static here so it can be used without * needed (for whatever reason)
         """
-        if not isinstance(num1, RadicalNum) or not isinstance(num2, RadicalNum):
+        if not isinstance(num1, Radical) or not isinstance(num2, Radical):
             raise TypeError(
                 "radical_multiplication is only for two objects of type RadicalNum")
 
@@ -121,52 +121,52 @@ class RadicalNum:
         # now multiply the radical we just made with the radicals from each number
         prod = prod * num1.rad_part * num2.rad_part
 
-        return RadicalNum(prod)
+        return Radical(prod)
 
+    @staticmethod
+    def int_root(in_root):
+        """
+        Takes in an integer and returns it's square root in simple radical form.
+        Example: sqrt[540] = sqrt[2*2*3*3*3*5] = 2*3*sqrt[(2*2*2*3*3*3*5) / (2^2 * 3^2)] = 6*sqrt[15]
+        """
+        # First, get our list of factors
+        factors = get_prime_factors(in_root)
 
-def int_root(in_root):
-    """
-    Takes in an integer and returns it's square root in simple radical form.
-    Example: sqrt[540] = sqrt[2*2*3*3*3*5] = 2*3*sqrt[(2*2*2*3*3*3*5) / (2^2 * 3^2)] = 6*sqrt[15]
-    """
-    # First, get our list of factors
-    factors = get_prime_factors(in_root)
+        # This will store
+        out_root = 1
 
-    # This will store
-    out_root = 1
+        i = 0
+        while i < len(factors)-1:
+            # Check if there is a repeated factor; if so, we can take the square root of that pair
+            if factors[i] == factors[i+1]:
+                out_root *= factors[i]
+                del factors[i+1]
+                del factors[i]
+                continue
+            i += 1
 
-    i = 0
-    while i < len(factors)-1:
-        # Check if there is a repeated factor; if so, we can take the square root of that pair
-        if factors[i] == factors[i+1]:
-            out_root *= factors[i]
-            del factors[i+1]
-            del factors[i]
-            continue
-        i += 1
+        # At this point, repeated roots will have been reduced
+        # and multiplied to the 'front' of the radical.
+        # However, we have not reduced the inside of the radical! We need to do that now.
+        # Since a factor outside of the radical was 'rooted',
+        # we need to re-square when reducing the interior.
+        # We could have reduced the interior as we removed factors,
+        # but this way we only need to do one division and one squaring instead of many.
+        in_root = int(in_root / (out_root**2))
 
-    # At this point, repeated roots will have been reduced
-    # and multiplied to the 'front' of the radical.
-    # However, we have not reduced the inside of the radical! We need to do that now.
-    # Since a factor outside of the radical was 'rooted',
-    # we need to re-square when reducing the interior.
-    # We could have reduced the interior as we removed factors,
-    # but this way we only need to do one division and one squaring instead of many.
-    in_root = int(in_root / (out_root**2))
+        return [out_root, in_root]
 
-    return [out_root, in_root]
+    @staticmethod
+    def rational_string(number):
+        """
+        Turns numbers into strings, and converts fractions with denominator 1 into an integer.
+        """
+        output = str(number)
+        if isinstance(number, Fraction):
+            if number.denominator == 1:
+                output = str(number.numerator)
 
-
-def rational_string(number):
-    """
-    Turns numbers into strings, and converts fractions with denominator 1 into an integer.
-    """
-    output = str(number)
-    if isinstance(number, Fraction):
-        if number.denominator == 1:
-            output = str(number.numerator)
-
-    return output
+        return output
 
 
 def get_prime_factors(number):
