@@ -19,7 +19,7 @@ class Radical:
         # We should make sure we are starting with a rational number
         if not isinstance(input_number, (Fraction, int)):
             raise TypeError(
-                "Simple radical form only makes sense applied to rationals!")
+                "Simple radical form only implemented for applying to rationals!")
 
         # To start, we assume the entire given number is inside the square root.
         # Other functions will fix this.
@@ -40,7 +40,8 @@ class Radical:
             if self.rad_part == other.rad_part:
                 # add together the not-radical parts
                 temp = self.rat_part + other.rat_part
-                # 'square' the rational part to represent it as a radical, multiply it in, and make new radical number
+                # 'square' the rational part to represent it as a radical, multiply it in,
+                # and make new radical number
                 return Radical(temp * temp * self.rad_part)
 
         # if our radical number is actually rational, we can add with those types
@@ -52,7 +53,7 @@ class Radical:
             "Can only add two RadicalNums of matching radical part")
 
     def __radd__(self, other):
-        return self.add(other)
+        return self + other
 
     def __mul__(self, other):
         """
@@ -86,8 +87,8 @@ class Radical:
         # We will handle the top and bottom factors separately,
         # since denominator radicals need to be moved.
         # Note each of these is a pair of the form [integer part, radical part]
-        top_vals = int_root(self.rad_part.numerator)
-        bot_vals = int_root(self.rad_part.denominator)
+        top_vals = self.int_root(self.rad_part.numerator)
+        bot_vals = self.int_root(self.rad_part.denominator)
 
         # For simple radical form, we will
         # remove square roots from the denominator by multiplying...
@@ -127,7 +128,8 @@ class Radical:
     def int_root(in_root):
         """
         Takes in an integer and returns it's square root in simple radical form.
-        Example: sqrt[540] = sqrt[2*2*3*3*3*5] = 2*3*sqrt[(2*2*2*3*3*3*5) / (2^2 * 3^2)] = 6*sqrt[15]
+        Example: sqrt[540] = sqrt[2*2*3*3*3*5]
+        = 2*3*sqrt[(2*2*2*3*3*3*5) / (2^2 * 3^2)] = 6*sqrt[15]
         """
         # First, get our list of factors
         factors = get_prime_factors(in_root)
@@ -156,17 +158,66 @@ class Radical:
 
         return [out_root, in_root]
 
-    @staticmethod
-    def rational_string(number):
-        """
-        Turns numbers into strings, and converts fractions with denominator 1 into an integer.
-        """
-        output = str(number)
-        if isinstance(number, Fraction):
-            if number.denominator == 1:
-                output = str(number.numerator)
 
-        return output
+class Complexi:
+    """
+    Class to handle complex numbers, in the form z = a + bi where i is the square root of -1.
+    """
+
+    def __init__(self, a=0.0, b=0.0):
+        self.real_part = a
+        self.comp_part = b
+        self.norm = self.calc_norm()
+
+    def calc_norm(self):
+        """
+        Returns the magnitude, |z|. Intended for use during construction
+        """
+        return (self.real_part*self.real_part + self.comp_part*self.comp_part)**2
+
+    def __add__(self, other):
+        if isinstance(other, Complexi):
+            return Complexi(self.real_part + other.real_part, self.comp_part + other.comp_part)
+        # else...
+        return Complexi(self.real_part + other, self.comp_part)
+
+    def __radd__(self, other):
+        return self + other
+
+    def __sub__(self, other):
+        if isinstance(other, Complexi):
+            return Complexi(self.real_part - other.real_part, self.comp_part - other.comp_part)
+        return Complexi(-1 * self.real_part + other, self.comp_part)
+
+    def __rsub__(self, other):
+        return -1 * self + other
+
+    def __mul__(self, other):
+        if isinstance(other, Complexi):
+            return Complexi(
+                self.real_part * other.real_part - self.comp_part * other.comp_part,
+                self.real_part * other.comp_part + self.comp_part * other.real_part
+            )
+        return Complexi(self.real_part * other, self.comp_part * other)
+
+    def __rmul__(self, other):
+        return self * other
+
+    def __truediv__(self, other):
+        if isinstance(other, Complexi):
+            return Complexi(
+                (self.real_part * other.real_part +
+                 self.comp_part * other.comp_part) / (other.norm**2),
+                (self.comp_part * other.real_part -
+                 self.real_part * other.comp_part) / (other.norm**2)
+            )
+        return Complexi(self.real_part / other, self.comp_part / other)
+
+    def __rtruediv__(self, other):
+        return self / other
+
+    def __str__(self):
+        return str(self.real_part) + ' + ' + str(self.comp_part) + 'i'
 
 
 def get_prime_factors(number):
@@ -187,3 +238,15 @@ def get_prime_factors(number):
     if number != 1:
         factor_list.append(number)
     return factor_list
+
+
+def rational_string(number):
+    """
+    Turns numbers into strings, and converts fractions with denominator 1 into an integer.
+    """
+    output = str(number)
+    if isinstance(number, Fraction):
+        if number.denominator == 1:
+            output = str(number.numerator)
+
+    return output
