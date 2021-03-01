@@ -75,6 +75,14 @@ class Radical:
     def __rmul__(self, other):
         return self.__mul__(other)
 
+    # TODO replace with multiplying by the reciprocal.
+    def __truediv__(self, other):
+        if isinstance(other, Radical):
+            temp = other
+        else:
+            temp = Radical(other * other)
+        return self * temp.reciprocal()
+
     def simplify(self):
         """
         This function takes in a number, and returns it in simple radical form.
@@ -105,7 +113,15 @@ class Radical:
         self.rad_part = top_vals[1]
         return outpair
 
-    @staticmethod
+    def reciprocal(self):
+        # First we flip the fraction part
+        newrat = 1 / self.rat_part
+        # then we square it to put it under a square root, and divide by the existing radical part to move that to the bottom
+        return Radical(newrat**2 / self.rad_part)
+
+        pass
+
+    @ staticmethod
     def radical_multiplication(num1, num2):
         """
         Multiplies two radical numbers of the type RadicalNum.
@@ -124,7 +140,7 @@ class Radical:
 
         return Radical(prod)
 
-    @staticmethod
+    @ staticmethod
     def int_root(in_root):
         """
         Takes in an integer and returns it's square root in simple radical form.
