@@ -5,6 +5,8 @@ This module will contain the functions that generate problems and solutions.
 import os
 from fractions import Fraction
 import rng_tools
+from mathobj import Radical
+from mathobj import SumPair
 
 
 # Nice, consistent newline characters
@@ -63,9 +65,9 @@ def twovarsys():
 
                 # now check for divisibility, since we want integer solutions
                 if (
-                    ((coeffs['d']*coeffs['e'] - coeffs['b']*coeffs['f']) % det) != 0 or
-                    ((coeffs['a']*coeffs['f'] -
-                      coeffs['c']*coeffs['e']) % det) != 0
+                        ((coeffs['d']*coeffs['e'] - coeffs['b']*coeffs['f']) % det) != 0 or
+                        ((coeffs['a']*coeffs['f'] -
+                          coeffs['c']*coeffs['e']) % det) != 0
                 ):
                     continue
 
@@ -108,9 +110,9 @@ def twovarsys():
                 # only just copied it from the unfinished integer one,
                 # need to change these conditions here, maybe coeffs also?
                 if (
-                    (coeffs['d']*coeffs['e'] - coeffs['b']*coeffs['f'] % det) != 0 and
-                    (coeffs['a']*coeffs['f'] -
-                     coeffs['c']*coeffs['e'] % det) != 0
+                        (coeffs['d']*coeffs['e'] - coeffs['b']*coeffs['f'] % det) != 0 and
+                        (coeffs['a']*coeffs['f'] -
+                         coeffs['c']*coeffs['e'] % det) != 0
                 ):
                     continue
 
@@ -203,16 +205,31 @@ def quadratics():
                 # two real roots means positive discriminant
                 finished = (disc > 0)
 
-        # TODO force rational output?
-        roots.append(((-1)*coeffs['b'] + disc**(0.5))/(2*coeffs['a']))
-        roots.append(((-1)*coeffs['b'] - disc**(0.5))/(2*coeffs['a']))
+        # We now add our two roots.
+        # If we can, we try to combine as one number (i.e., if disc is perfect square)
+        # otherwise, we list the root as the pair of its parts
+        try:
+            roots.append(((-1)*coeffs['b'] + Radical(disc))/(2*coeffs['a']))
+        except TypeError:
+            roots.append(
+                SumPair((-1)*coeffs['b']/(2*coeffs['a']), Radical(disc)/(2*coeffs['a'])))
+        try:
+            roots.append(((-1)*coeffs['b'] - Radical(disc))/(2*coeffs['a']))
+        except TypeError:
+            roots.append(
+                SumPair((-1)*coeffs['b']/(2*coeffs['a']), Radical(disc)/(2*coeffs['a']), "-"))
 
-        # TODO properly sign b and c
-        print("Polynomial is: " + str(coeffs['a']) + "x^2 + " +
-              str(coeffs['b']) + "x + " + str(coeffs['c']))
+        b_op = ' + ' if coeffs['b'] > 0 else ' - '
+        c_op = ' + ' if coeffs['c'] > 0 else ' - '
 
+        print("Polynomial is: " + str(coeffs['a']) + "x^2" + b_op +
+              str(coeffs['b']).replace('-', '') + "x" + c_op + str(coeffs['c']).replace('-', ''))
+
+        # TODO properly sign outputs
         print("Factored form: " + str(coeffs['a']) +
               "(x" + str_rt_sub(str(roots[0])) + ")(x"+str_rt_sub(str(roots[1]))+")")
+
+        print("The roots are: " + list_stringer(roots))
         print(NEWLINE)
 
     print("Ending program...")
@@ -228,3 +245,14 @@ def str_rt_sub(inbound_num):
         return inbound_num.replace('-', '+')
 
     return '-'+inbound_num
+
+
+def list_stringer(list_of_nums):
+    """
+    function to print elements of a list using their own __str__ methods
+    """
+    output = ''
+    for item in list_of_nums:
+        output += str(item) + ', '
+    output = output[:-2]
+    return output

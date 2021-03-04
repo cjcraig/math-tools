@@ -27,6 +27,7 @@ class Radical:
         self.rad_part = Fraction(input_number)
         self.simplify()
 
+    # TODO make it clear the radical part is on top of the fraction
     def __str__(self):
         rootstring = ''
         if self.rad_part != 1:
@@ -44,8 +45,8 @@ class Radical:
                 # and make new radical number
                 return Radical(temp * temp * self.rad_part)
 
-        # if our radical number is actually rational, we can add with those types
         if isinstance(other, (Fraction, int)):
+            # if our radical number is actually rational, we can skip a step
             if self.rad_part == 1:
                 return self.rat_part + other
 
@@ -75,7 +76,6 @@ class Radical:
     def __rmul__(self, other):
         return self.__mul__(other)
 
-    # TODO replace with multiplying by the reciprocal.
     def __truediv__(self, other):
         if isinstance(other, Radical):
             temp = other
@@ -114,12 +114,14 @@ class Radical:
         return outpair
 
     def reciprocal(self):
+        """
+        Returns the reciprocal of the current number as a Radical
+        """
         # First we flip the fraction part
         newrat = 1 / self.rat_part
-        # then we square it to put it under a square root, and divide by the existing radical part to move that to the bottom
+        # then we square it to put it under a square root,
+        # and divide by the existing radical part to move that to the bottom
         return Radical(newrat**2 / self.rad_part)
-
-        pass
 
     @ staticmethod
     def radical_multiplication(num1, num2):
@@ -234,6 +236,38 @@ class Complexi:
 
     def __str__(self):
         return str(self.real_part) + ' + ' + str(self.comp_part) + 'i'
+
+
+class SumPair:
+    """
+    Used for instances where a number is composed of two parts that can't be simplified.
+    For example, a field extension or the number "2 + sqrt{3}"
+    """
+
+    def __init__(self, first, second, sign="+"):
+        self.first = first
+        self.second = second
+        self.sign = sign
+
+    def __str__(self):
+        return str(self.first) + self.sign + str(self.second)
+
+    def get_types(self):
+        """
+        returns a list of the types of objects in the SumPair,
+        or list of all types in all pairs in the case of chains
+        """
+        types = []
+        if isinstance(self.first, SumPair):
+            types = types + self.first.get_types
+        else:
+            types.append(type(self.first))
+
+        if isinstance(self.second, SumPair):
+            types = types + self.second.get_types
+        else:
+            types.append(type(self.second))
+        return types
 
 
 def get_prime_factors(number):
